@@ -60,7 +60,7 @@ export function RegisterForm({
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
-                <Button variant="outline" className="w-full" disabled>
+                <Button variant="outline" className="w-full cursor-pointer" disabled>
                   Créer un compte avec Google
                 </Button>
               </div>
@@ -82,7 +82,7 @@ export function RegisterForm({
                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
                 {loading ? "Création..." : "Créer un compte"}
               </Button>
               <div className="text-center text-sm">

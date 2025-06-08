@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { api } from "@/hooks/api"
+import { Badge } from "@/components/ui/badge"
 
 interface User {
   id: number
   name: string
   email: string
-  avatar: string | null
+  rank: string
   created_at: string
 }
 
@@ -17,6 +18,48 @@ interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
+
+export const isAdmin = (user: User | null): boolean => {
+  return user?.rank === "admin"
+}
+
+export const isMod = (user: User | null): boolean => {
+  return user?.rank === "mod"
+}
+
+export const getRankBadge = (rank: string) => {
+    switch (rank) {
+      case "admin":
+        return (
+          <Badge variant="destructive" className="flex items-center gap-1 px-1.5 py-0.5 text-xs">
+            A
+          </Badge>
+        )
+      case "mod":
+        return (
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1 bg-blue-500 text-white dark:bg-blue-600 px-1.5 py-0.5 text-xs"
+          >
+            M
+          </Badge>
+        )
+      case "guest":
+      default:
+        return null
+    }
+}
+
+export const getUserColor = (rank: string) => {
+    switch (rank) {
+      case "admin":
+        return "text-red-500 dark:text-red-400"
+      case "mod":
+        return "text-blue-500 dark:text-blue-400"
+      default:
+        return "text-muted-foreground"
+    }
+}
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)

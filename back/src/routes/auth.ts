@@ -7,7 +7,7 @@ import { AuthRequest, verifyToken } from '../middlewares/auth'
 const router = Router()
 
 router.post('/register', async (req: Request, res: Response): Promise<void> => {
-  const { email, name, password, avatar } = req.body
+  const { email, name, password } = req.body
   if (!email || !password) {
     res.status(400).json({ error: 'Email et mot de passe obligatoires' })
     return
@@ -16,8 +16,8 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
     const result = await pool.query(
-      `INSERT INTO users (email, name, password, avatar) VALUES ($1, $2, $3, $4) RETURNING id, email, name, avatar, created_at`,
-      [email, name, hashedPassword, avatar]
+      `INSERT INTO users (email, name, password, rank) VALUES ($1, $2, $3, 'guest') RETURNING id, email, name, rank, created_at`,
+      [email, name, hashedPassword]
     )
 
     const user = result.rows[0]
@@ -32,7 +32,6 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: 'Erreur lors de la création' })
   }
 })
-
 
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body
@@ -65,7 +64,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
         id: user.id,
         email: user.email,
         name: user.name,
-        avatar: user.avatar,
+        rank: user.rank,
         created_at: user.created_at,
       }
     })
@@ -83,7 +82,7 @@ router.get('/me', verifyToken, async (req: AuthRequest, res: Response) => {
     }
     const userId = req.user.id
     const result = await pool.query(
-      'SELECT id, email, name, avatar, created_at FROM users WHERE id = $1',
+      'SELECT id, email, name, rank, created_at FROM users WHERE id = $1',
       [userId]
     )
     if (result.rows.length === 0) {

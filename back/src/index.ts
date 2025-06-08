@@ -4,10 +4,10 @@ import dotenv from 'dotenv'
 import { pool } from './db'
 
 import authRoutes from './routes/auth'
-import trackRoutes from './routes/tracks'
+import publicationRoutes from './routes/publication'
 import commentRoutes from './routes/comments'
 import likeRoutes from './routes/likes'
-import categoryRoutes from './routes/categories'
+import genresRoutes from './routes/genres'
 
 dotenv.config()
 
@@ -16,10 +16,10 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/api', authRoutes)
-app.use('/api/tracks', trackRoutes)
+app.use('/api/publications', publicationRoutes)
 app.use('/api/comments', commentRoutes)
 app.use('/api/likes', likeRoutes)
-app.use('/api/categories', categoryRoutes)
+app.use('/api/genres', genresRoutes)
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('🎵 API TypeScript + Postgres is running')

@@ -60,7 +60,7 @@ export function LoginForm({
           <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
-                <Button variant="outline" className="w-full" disabled>
+                <Button variant="outline" className="w-full cursor-pointer" disabled>
                   Se connecter avec Google
                 </Button>
               </div>
@@ -79,7 +79,7 @@ export function LoginForm({
                   <Input id="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 {error && <p className="text-sm text-red-500 text-center -mt-3">{error}</p>}
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
                   {loading ? "Connexion..." : "Se connecter"}
                 </Button>
               </div>

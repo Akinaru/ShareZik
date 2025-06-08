@@ -16,6 +16,9 @@ import { useEffect, useRef, type JSX } from "react"
 import Layout from "./components/Layout"
 import NewPublication from "./pages/publication/NewPublication"
 import NotFoundPage from "./pages/notfound"
+import MyPublication from "./pages/publication/MyPublication"
+import Genres from "./pages/genres"
+import Publications from "./pages/publications"
 
 // Route protégée : accès uniquement si connecté
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -102,11 +105,41 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/publications"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Publications />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/publications/new"
         element={
           <ProtectedRoute>
             <Layout>
               <NewPublication />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/publications/my"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <MyPublication />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/genres"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Genres />
             </Layout>
           </ProtectedRoute>
         }
