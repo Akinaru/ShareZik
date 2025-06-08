@@ -7,6 +7,10 @@ export const setAuthToken = (t: string) => {
 
 export const getAuthToken = () => token
 
+export const clearAuthToken = () => {
+  localStorage.removeItem("authToken")
+}
+
 export const api = async (
   endpoint: string,
   method: string = "GET",

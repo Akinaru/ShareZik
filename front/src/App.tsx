@@ -1,33 +1,35 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
 import Login from "./pages/login"
 import Register from "./pages/register"
+import Home from "./pages/home"
+import { UserProvider } from "./hooks/userContext"
 
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route
-            path="/login"
-            element={
-                <Login></Login>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-                <Register></Register>
-            }
-          />
-          <Route
-            path="/app"
-            element={<div className="text-white p-10">Zone connectée 🧠</div>}
-          />
-        </Routes>
-      </Router>
+      <UserProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={
+              <Home></Home>
+            } />
+            <Route
+              path="/login"
+              element={
+                  <Login></Login>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                  <Register></Register>
+              }
+            />
+          </Routes>
+        </Router>
+      </UserProvider>
     </ThemeProvider>
   )
 }

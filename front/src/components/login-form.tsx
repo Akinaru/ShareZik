@@ -30,8 +30,8 @@ export function LoginForm({
 
     try {
       const res = await api("/login", "POST", { email, password })
-      setAuthToken(res.token) // <-- stocke le token globalement (ex: localStorage ou header axios)
-      navigate("/app")
+      setAuthToken(res.token)
+      navigate("/")
     } catch (err: any) {
       setError(err.message || "Erreur de connexion")
     } finally {
