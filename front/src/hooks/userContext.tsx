@@ -13,20 +13,30 @@ interface UserContextType {
   user: User | null
   setUser: (user: User | null) => void
   logout: () => void
+  isLoading: boolean
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("authToken")
+      if (!token) {
+        setIsLoading(false)
+        return
+      }
+
       try {
-        const data = await api('/me', 'GET')
+        const data = await api("/me", "GET")
         setUser(data)
       } catch {
         setUser(null)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -39,7 +49,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, setUser, logout, isLoading }}>
       {children}
     </UserContext.Provider>
   )

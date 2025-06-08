@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { api, setAuthToken } from "@/hooks/api"
+import { useUser } from "@/hooks/userContext"
 
 export function LoginForm({
   className,
@@ -23,6 +24,8 @@ export function LoginForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
+  const { setUser } = useUser()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -31,6 +34,10 @@ export function LoginForm({
     try {
       const res = await api("/login", "POST", { email, password })
       setAuthToken(res.token)
+
+      const user = await api("/me", "GET")
+      setUser(user)
+
       navigate("/")
     } catch (err: any) {
       setError(err.message || "Erreur de connexion")
@@ -38,6 +45,7 @@ export function LoginForm({
       setLoading(false)
     }
   }
+
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -64,11 +72,11 @@ export function LoginForm({
               <div className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Input id="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="password">Mot de passe</Label>
-                  <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <Input id="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 {error && <p className="text-sm text-red-500 text-center -mt-3">{error}</p>}
                 <Button type="submit" className="w-full" disabled={loading}>
