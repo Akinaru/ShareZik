@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import { useEffect, useRef, type JSX } from "react"
 import Layout from "./components/Layout"
 import NewPublication from "./pages/publication/NewPublication"
+import NotFoundPage from "./pages/notfound"
 
 // Route protégée : accès uniquement si connecté
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -64,6 +65,16 @@ function PublicRoute({ children }: { children: JSX.Element }) {
 function AppRoutes() {
   return (
     <Routes>
+      <Route
+        path="*"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <NotFoundPage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/login"
         element={
