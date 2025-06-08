@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
 import Login from "./pages/login"
 import Register from "./pages/register"
@@ -7,7 +13,10 @@ import { UserProvider, useUser } from "./hooks/userContext"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 import { useEffect, useRef, type JSX } from "react"
+import Layout from "./components/Layout"
+import NewPublication from "./pages/publication/NewPublication"
 
+// Route protégée : accès uniquement si connecté
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { user, isLoading } = useUser()
   const location = useLocation()
@@ -22,10 +31,31 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
     }
   }, [user, isLoading])
 
-  if (isLoading) return null // ou un loader si tu veux
-
+  if (isLoading) return null
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
+  }
+
+  return children
+}
+
+// Route publique : accès uniquement si NON connecté
+function PublicRoute({ children }: { children: JSX.Element }) {
+  const { user, isLoading } = useUser()
+  const hasShownToast = useRef(false)
+
+  useEffect(() => {
+    if (!isLoading && user && !hasShownToast.current) {
+      toast("Déjà connecté", {
+        description: "Tu es déjà connecté à ton compte.",
+      })
+      hasShownToast.current = true
+    }
+  }, [user, isLoading])
+
+  if (isLoading) return null
+  if (user) {
+    return <Navigate to="/" replace />
   }
 
   return children
@@ -34,13 +64,39 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
       <Route
         path="/"
         element={
           <ProtectedRoute>
-            <Home />
+            <Layout>
+              <Home />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/publications/new"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <NewPublication />
+            </Layout>
           </ProtectedRoute>
         }
       />

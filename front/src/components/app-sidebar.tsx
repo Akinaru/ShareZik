@@ -52,12 +52,13 @@ const data = {
       ],
     },
     {
-      title: "Partager",
-      url: "/share",
+      title: "Publications",
+      url: "/publication",
       icon: Upload,
       items: [
-        { title: "Nouvelle musique", url: "/share/new" },
-        { title: "Mes partages", url: "/share/mine" },
+        { title: "Les publications", url: "/publications" },
+        { title: "Nouvelle musique", url: "/publications/new" },
+        { title: "Mes partages", url: "/publications/mine" },
       ],
     },
     {

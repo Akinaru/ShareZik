@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
+import { useUser } from "@/hooks/userContext"
 
 export function RegisterForm({
   className,
@@ -24,17 +25,21 @@ export function RegisterForm({
   const [error, setError] = useState<string | null>(null)
 
   const navigate = useNavigate()
+  const { setUser } = useUser()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
 
     try {
       const res = await api("/register", "POST", { name, email, password })
-      setAuthToken(res.token) // Optionnel : tu peux connecter direct après
-      navigate("/login")
+      setAuthToken(res.token)
+      
+      const user = await api("/me", "GET")
+      setUser(user)
+
+      navigate("/")
     } catch (err: any) {
       setError(err.message || "Erreur inconnue")
     } finally {

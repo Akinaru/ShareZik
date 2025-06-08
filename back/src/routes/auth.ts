@@ -20,12 +20,19 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
       [email, name, hashedPassword, avatar]
     )
 
-    res.status(201).json(result.rows[0])
+    const user = result.rows[0]
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, { expiresIn: '1h' })
+
+    res.status(201).json({
+      token,
+      user
+    })
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: 'Erreur lors de la création' })
   }
 })
+
 
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body
