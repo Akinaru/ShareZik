@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react"
 import { api } from "@/hooks/api"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { SidebarInset } from "@/components/ui/sidebar"
 import CustomBreadcrumb from "@/components/Breadcrumb"
-import { getRankBadge, getUserColor } from "@/hooks/userContext"
-import { CardPublication } from "@/components/CardPublication"
+import { CardPublication, type Genre } from "@/components/CardPublication"
 
 interface Publication {
   id: number
@@ -14,12 +11,13 @@ interface Publication {
   url: string
   embedUrl: string
   coverUrl: string
+  createdAt: string
   user: {
     name: string
     avatar: string
     rank: string
   }
-  categories: { id: number; name: string }[]
+  categories: Genre[]
 }
 
 export default function Publications() {
@@ -51,16 +49,17 @@ export default function Publications() {
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {tracks.map((track) => (
+            {tracks.map((publication) => (
             <CardPublication
-                key={track.id}
-                id={track.id}
-                title={track.title}
-                artist={track.artist}
-                url={track.url}
-                coverUrl={track.coverUrl}
-                user={track.user}
-                categories={track.categories || []}
+                key={publication.id}
+                id={publication.id}
+                title={publication.title}
+                artist={publication.artist}
+                url={publication.url}
+                coverUrl={publication.coverUrl}
+                user={publication.user}
+                createdAt={publication.createdAt}
+                genres={publication.genres || []}
             />
             ))}
           </div>

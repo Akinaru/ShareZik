@@ -4,10 +4,10 @@ import {
   GalleryVerticalEnd,
   Music2,
   PlusCircle,
-  Upload,
   Users,
   ShieldCheck,
   LayoutDashboard,
+  Contact,
 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 
@@ -36,7 +36,7 @@ const items = [
   {
     title: "Publications",
     url: "/publications",
-    icon: Upload,
+    icon: LayoutDashboard,
   },
   {
     title: "Communauté",
@@ -165,6 +165,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+                <SidebarMenuItem
+                >
+                  <SidebarMenuButton asChild>
+                    <Link to="/contact">
+                      <Contact className="mr-2 size-4" />
+                      <span>Contact</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>

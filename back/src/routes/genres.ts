@@ -14,6 +14,30 @@ router.get('/', async (req, res) => {
   }
 })
 
+
+router.get('/top', async (_req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        g.id, 
+        g.name, 
+        COUNT(pg.publication_id) AS publication_count
+      FROM genres g
+      JOIN publication_genres pg ON pg.genre_id = g.id
+      GROUP BY g.id
+      ORDER BY publication_count DESC
+      LIMIT 5
+    `)
+
+    res.json(result.rows)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Erreur récupération genres populaires" })
+  }
+})
+
+
+
 // POST a new category (admin use)
 router.post('/', async (req, res) => {
   const { name } = req.body

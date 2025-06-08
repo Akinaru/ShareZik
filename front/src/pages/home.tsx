@@ -9,12 +9,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { Music2 } from "lucide-react"
 import CustomBreadcrumb from "@/components/Breadcrumb"
-import { CardPublication } from "@/components/CardPublication"
+import { CardPublication, type Genre } from "@/components/CardPublication"
+import { Badge } from "@/components/ui/badge"
 
-interface Genre {
-  id: number
-  name: string
-}
 
 interface Publication {
   id: number
@@ -29,26 +26,29 @@ interface Publication {
     avatar?: string
     rank: string
   }
-   genres: Genre[]
+  genres: Genre[]
 }
 
 export default function Home() {
   const [publications, setPublications] = useState<Publication[]>([])
+  const [topGenres, setTopGenres] = useState<Genre[]>([])
 
   useEffect(() => {
-    const fetchPublications = async () => {
+    const fetchData = async () => {
       try {
-        const data = await api("/publications/last")
-        setPublications(data)
+        const [publi, genres] = await Promise.all([
+          api("/publications/last"),
+          api("/genres/top"),
+        ])
+        setPublications(publi)
+        setTopGenres(genres)
       } catch (err) {
-        console.error("Erreur récupération publications", err)
+        console.error("Erreur récupération données", err)
       }
     }
 
-    fetchPublications()
+    fetchData()
   }, [])
-
-  const categories = ["Techno", "Chill", "Experimental", "Ambient", "House", "Garage"]
 
   return (
     <SidebarInset>
@@ -96,16 +96,23 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {categories.map((cat, i) => (
+              {topGenres.map((genre) => (
                 <div
-                  key={i}
-                  className="group flex items-center justify-center rounded-xl border bg-muted p-4 text-center shadow-sm transition hover:shadow-md hover:bg-background cursor-pointer"
+                  key={genre.id}
+                  className="relative group flex items-center justify-center rounded-xl border bg-muted p-4 text-center shadow-sm transition hover:shadow-md hover:bg-background cursor-pointer"
                 >
                   <Music2 className="mr-2 h-4 w-4 text-primary opacity-60 group-hover:animate-pulse" />
-                  <span className="text-sm font-medium text-foreground">{cat}</span>
+                  <span className="text-sm font-medium text-foreground">{genre.name}</span>
+
+                  {genre.publication_count && (
+                    <Badge className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5">
+                      {genre.publication_count}
+                    </Badge>
+                  )}
                 </div>
               ))}
             </div>
+
           </section>
 
           {/* CTA */}

@@ -18,7 +18,9 @@ import NewPublication from "./pages/publication/NewPublication"
 import NotFoundPage from "./pages/notfound"
 import MyPublication from "./pages/publication/MyPublication"
 import Genres from "./pages/genres"
-import Publications from "./pages/publications"
+import Publications from "./pages/publication/publications"
+import GestionPublication from "./pages/publication/GestionPublication"
+
 
 // Route protégée : accès uniquement si connecté
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -100,6 +102,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <Layout>
               <Home />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="admin/publications"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <GestionPublication />
             </Layout>
           </ProtectedRoute>
         }

@@ -7,9 +7,10 @@ import { fr } from "date-fns/locale"
 import { useState } from "react"
 import { Skeleton } from "./ui/skeleton"
 
-interface Genre {
+export interface Genre {
   id: number
   name: string
+  publication_count: number
 }
 
 interface User {
@@ -73,15 +74,15 @@ const [isImgError, setIsImgError] = useState(false)
 
           <h3 className="text-sm font-semibold leading-tight truncate">
             {title?.length > 0
-              ? title.length > 35
-                ? `${title.slice(0, 35)}…`
+              ? title.length > 55
+                ? `${title.slice(0, 55)}…`
                 : title
               : "Titre inconnu"}
           </h3>
           <p className="text-xs text-muted-foreground truncate">
             {artist?.length > 0
-              ? artist.length > 35
-                ? `${artist.slice(0, 35)}…`
+              ? artist.length > 55
+                ? `${artist.slice(0, 55)}…`
                 : artist
               : "Artiste inconnu"}
           </p>
