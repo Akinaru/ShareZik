@@ -23,8 +23,6 @@ router.get('/', async (req, res) => {
   }
 })
 
-
-
 router.get('/top', async (_req, res) => {
   try {
     const result = await pool.query(`
@@ -45,9 +43,6 @@ router.get('/top', async (_req, res) => {
     res.status(500).json({ error: "Erreur récupération genres populaires" })
   }
 })
-
-
-
 
 // POST a new category (admin use)
 router.post('/', async (req, res) => {

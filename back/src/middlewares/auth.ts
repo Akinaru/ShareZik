@@ -3,14 +3,17 @@ import jwt from "jsonwebtoken"
 import { pool } from "../db"
 
 export interface AuthRequest extends Request {
-  user?: { id: number }
+  user?: {
+    rank: string,
+    id: number 
+}
 }
 
-export const verifyToken = (
+export const verifyToken = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): void => {
+) => {
   const authHeader = req.headers.authorization
   const token = authHeader?.split(" ")[1]
 
@@ -21,13 +24,23 @@ export const verifyToken = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: number }
-    req.user = { id: decoded.id }
+
+    const result = await pool.query(`SELECT rank FROM users WHERE id = $1`, [decoded.id])
+    const user = result.rows[0]
+
+    if (!user) {
+      res.status(404).json({ error: "Utilisateur introuvable" })
+      return
+    }
+
+    req.user = { id: decoded.id, rank: user.rank }
     next()
   } catch (err) {
+    console.error(err)
     res.status(401).json({ error: "Token invalide" })
-    return
   }
 }
+
 
 export const requireAdmin = async (
   req: AuthRequest,

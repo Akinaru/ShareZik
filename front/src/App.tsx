@@ -8,10 +8,11 @@ import {
   useLocation,
 } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
-import { UserProvider, useUser } from "./hooks/userContext"
+import { isAdmin, isMod, isValidated, UserProvider, useUser } from "./hooks/userContext"
 import Layout from "./components/Layout"
 import { Toaster } from "@/components/ui/sonner"
 import { Suspense, lazy, type JSX } from "react"
+import GestionUser from "./pages/admin/GestionUser"
 
 // Lazy loaded pages
 const Login = lazy(() => import("./pages/login"))
@@ -22,8 +23,8 @@ const NotFoundPage = lazy(() => import("./pages/notfound"))
 const MyPublication = lazy(() => import("./pages/publication/MyPublication"))
 const Genres = lazy(() => import("./pages/genre/genres"))
 const Publications = lazy(() => import("./pages/publication/publications"))
-const GestionPublication = lazy(() => import("./pages/publication/GestionPublication"))
-const GestionGenre = lazy(() => import("./pages/genre/GestionGenre"))
+const GestionPublication = lazy(() => import("./pages/admin/GestionPublication"))
+const GestionGenre = lazy(() => import("./pages/admin/GestionGenre"))
 
 // Routes protégées
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -48,9 +49,20 @@ function AdminRoute({ children }: { children: JSX.Element }) {
 
   if (isLoading) return null
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />
-  if (user.rank !== "admin") return <Navigate to="/" replace />
+  if (!isAdmin(user)) return <Navigate to="/" replace />
   return children
 }
+
+function ValidatedRoute({ children }: { children: JSX.Element }) {
+  const { user, isLoading } = useUser()
+  const location = useLocation()
+
+  if (isLoading) return null
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />
+  if (!isValidated(user)) return <Navigate to="/" replace />
+  return children
+}
+
 
 function ModRoute({ children }: { children: JSX.Element }) {
   const { user, isLoading } = useUser()
@@ -58,7 +70,7 @@ function ModRoute({ children }: { children: JSX.Element }) {
 
   if (isLoading) return null
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />
-  if (user.rank !== "admin" && user.rank !== "mod") return <Navigate to="/" replace />
+  if (!isMod(user)) return <Navigate to="/" replace />
   return children
 }
 
@@ -103,6 +115,16 @@ function AppRoutes() {
           }
         />
         <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <Layout>
+                <GestionUser />
+              </Layout>
+            </AdminRoute>
+          }
+        />
+        <Route
           path="/admin/genres"
           element={
             <AdminRoute>
@@ -125,11 +147,11 @@ function AppRoutes() {
         <Route
           path="/publications/new"
           element={
-            <ProtectedRoute>
+            <ValidatedRoute>
               <Layout>
                 <NewPublication />
               </Layout>
-            </ProtectedRoute>
+            </ValidatedRoute>
           }
         />
         <Route

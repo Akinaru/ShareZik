@@ -1,14 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import { api } from "@/hooks/api"
 import { Badge } from "@/components/ui/badge"
-
-interface User {
-  id: number
-  name: string
-  email: string
-  rank: string
-  created_at: string
-}
+import type { User } from "@/Models/User"
 
 interface UserContextType {
   user: User | null
@@ -26,6 +19,11 @@ export const isAdmin = (user: User | null): boolean => {
 export const isMod = (user: User | null): boolean => {
   return user?.rank === "mod"
 }
+
+export const isValidated = (user: User | null): boolean => {
+  return user?.is_validated === true;
+}
+
 
 export const getRankBadge = (rank: string) => {
     switch (rank) {
