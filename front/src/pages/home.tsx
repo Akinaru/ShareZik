@@ -84,7 +84,7 @@ export default function Home() {
                         key={index}
                         className="pl-4 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
                       >
-                        <Skeleton className="h-48 rounded-xl" />
+                        <Skeleton className="h-96 rounded-xl" />
                       </CarouselItem>
                     ))
                   : publications.map((publication, index) => (
@@ -119,7 +119,7 @@ export default function Home() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {isLoadingGenres
                 ? Array.from({ length: 6 }).map((_, index) => (
-                    <Skeleton key={index} className="h-24 rounded-xl" />
+                    <Skeleton key={index} className="h-16 rounded-xl" />
                   ))
                 : topGenres.map((genre) => (
                     <CardGenre

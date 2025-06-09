@@ -31,12 +31,12 @@ router.get('/top', async (_req, res) => {
       SELECT 
         g.id, 
         g.name, 
-        COUNT(pg.publication_id) AS nb_publi
+        COALESCE(COUNT(pg.publication_id), 0) AS nb_publi
       FROM genres g
-      JOIN publication_genres pg ON pg.genre_id = g.id
+      LEFT JOIN publication_genres pg ON pg.genre_id = g.id
       GROUP BY g.id
       ORDER BY nb_publi DESC
-      LIMIT 5
+      LIMIT 6
     `)
 
     res.json(result.rows)
@@ -45,6 +45,7 @@ router.get('/top', async (_req, res) => {
     res.status(500).json({ error: "Erreur récupération genres populaires" })
   }
 })
+
 
 
 
