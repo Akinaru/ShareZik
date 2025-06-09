@@ -17,6 +17,8 @@ import MyPublication from "./pages/publication/MyPublication"
 import Genres from "./pages/genres"
 import Publications from "./pages/publication/publications"
 import GestionPublication from "./pages/publication/GestionPublication"
+import { Toaster } from "@/components/ui/sonner"
+import type { JSX } from "react"
 
 // Route protégée : accès uniquement si connecté
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -143,6 +145,7 @@ function App() {
         <Router>
           <AppRoutes />
         </Router>
+        <Toaster />
       </UserProvider>
     </ThemeProvider>
   )

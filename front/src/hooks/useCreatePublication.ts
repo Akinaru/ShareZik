@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { api } from "@/hooks/api"
+import { toast } from "sonner"
 
 interface Genre {
   id: number
@@ -72,10 +73,15 @@ export function useCreatePublication() {
       setLink("")
       setPlatform("")
       setSelectedGenreIds([])
-      alert("Publication ajoutée avec succès !")
+      toast("Publication ajoutée avec succès !", {
+        description: "Votre publication a été créée.",
+      })
+      
     } catch (err) {
       console.error(err)
-      alert("Erreur lors de la publication.")
+      toast("Erreur lors de la publication.", {
+        description: "Veuillez vérifier les informations saisies.",
+      })
     } finally {
       setLoading(false)
     }

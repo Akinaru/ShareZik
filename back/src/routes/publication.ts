@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { pool } from '../db'
-import { AuthRequest, verifyToken } from '../middlewares/auth'
+import { AuthRequest, requireAdmin, verifyToken } from '../middlewares/auth'
+import { Response } from "express"
 
 const router = Router()
 
@@ -124,6 +125,25 @@ router.get('/last', async (_req, res) => {
     res.status(500).json({ error: 'Erreur récupération dernières publications' })
   }
 })
+
+router.delete("/:id", verifyToken, requireAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  const publicationId = parseInt(req.params.id, 10)
+
+  if (isNaN(publicationId)) {
+    res.status(400).json({ error: "ID invalide" })
+    return
+  }
+
+  try {
+    await pool.query(`DELETE FROM publication_genres WHERE publication_id = $1`, [publicationId])
+    await pool.query(`DELETE FROM publications WHERE id = $1`, [publicationId])
+    res.status(200).json({ success: true })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: "Erreur lors de la suppression" })
+  }
+})
+
 
 
 export default router
