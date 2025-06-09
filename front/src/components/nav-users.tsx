@@ -10,11 +10,6 @@ import {
 } from "lucide-react"
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -30,7 +25,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useUser } from "@/hooks/userContext"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { clearAuthToken } from "@/hooks/api"
 import { useTheme } from "@/components/theme-provider"
 
@@ -106,14 +101,18 @@ export function NavUser() {
 
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <Link to="/my-account">
               <DropdownMenuItem className="cursor-pointer">
                 <BadgeCheck className="mr-2 size-4" />
                 Mon compte
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              </Link>
+              <Link to="/my-account/publications">
+                <DropdownMenuItem className="cursor-pointer">
                 <Music2 className="mr-2 size-4" />
                 Mes publications
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />

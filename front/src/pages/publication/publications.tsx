@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import { api } from "@/hooks/api"
 import { SidebarInset } from "@/components/ui/sidebar"
 import CustomBreadcrumb from "@/components/Breadcrumb"
-import { CardPublication, type Genre } from "@/components/CardPublication"
+import { CardPublication } from "@/components/CardPublication"
+import type { Genre } from "@/Models/Genre"
 
 interface Publication {
   id: number
@@ -17,7 +18,7 @@ interface Publication {
     avatar: string
     rank: string
   }
-  categories: Genre[]
+  genres: Genre[]
 }
 
 export default function Publications() {

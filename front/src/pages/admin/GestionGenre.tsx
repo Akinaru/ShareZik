@@ -54,7 +54,7 @@ export default function GestionGenre() {
   const [isAdding, setIsAdding] = useState(false)
 
   // pour le Dialog dynamique
-  const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null)
+  const [,setSelectedGenre] = useState<Genre | null>(null)
   const [linkedPublications, setLinkedPublications] = useState<Publication[]>([])
   const [loadingLinkedPubs, setLoadingLinkedPubs] = useState(false)
 

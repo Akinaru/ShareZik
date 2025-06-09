@@ -8,11 +8,12 @@ import {
   useLocation,
 } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
-import { isAdmin, isMod, isValidated, UserProvider, useUser } from "./hooks/userContext"
+import { isAdmin, isValidated, UserProvider, useUser } from "./hooks/userContext"
 import Layout from "./components/Layout"
 import { Toaster } from "@/components/ui/sonner"
 import { Suspense, lazy, type JSX } from "react"
 import GestionUser from "./pages/admin/GestionUser"
+import MyAccount from "./pages/my-account/MyAccount"
 
 // Lazy loaded pages
 const Login = lazy(() => import("./pages/login"))
@@ -20,7 +21,7 @@ const Register = lazy(() => import("./pages/register"))
 const Home = lazy(() => import("./pages/home"))
 const NewPublication = lazy(() => import("./pages/publication/NewPublication"))
 const NotFoundPage = lazy(() => import("./pages/notfound"))
-const MyPublication = lazy(() => import("./pages/publication/MyPublication"))
+const MyPublication = lazy(() => import("./pages/my-account/MyPublication"))
 const Genres = lazy(() => import("./pages/genre/genres"))
 const Publications = lazy(() => import("./pages/publication/publications"))
 const GestionPublication = lazy(() => import("./pages/admin/GestionPublication"))
@@ -63,16 +64,6 @@ function ValidatedRoute({ children }: { children: JSX.Element }) {
   return children
 }
 
-
-function ModRoute({ children }: { children: JSX.Element }) {
-  const { user, isLoading } = useUser()
-  const location = useLocation()
-
-  if (isLoading) return null
-  if (!user) return <Navigate to="/login" state={{ from: location }} replace />
-  if (!isMod(user)) return <Navigate to="/" replace />
-  return children
-}
 
 function AppRoutes() {
   return (
@@ -155,7 +146,17 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/publications/my"
+          path="/my-account"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <MyAccount />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-account/publications"
           element={
             <ProtectedRoute>
               <Layout>

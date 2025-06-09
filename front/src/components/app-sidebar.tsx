@@ -111,7 +111,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {items.map((item) => (
                 <SidebarMenuItem
                   key={item.title}
-                  isActive={location.pathname === item.url}
                 >
                   <SidebarMenuButton asChild>
                     <Link to={item.url}>
@@ -153,7 +152,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {adminItems.map((item) => (
                   <SidebarMenuItem
                     key={item.title}
-                    isActive={location.pathname === item.url}
                   >
                     <SidebarMenuButton asChild>
                       <Link to={item.url} className="flex items-center gap-2">

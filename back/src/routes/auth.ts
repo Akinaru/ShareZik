@@ -275,17 +275,36 @@ router.put('/validate/:id', verifyToken, requireAdmin, async (req: AuthRequest, 
  * @throws {403} - Si l'utilisateur n'est pas administrateur
  * @throws {500} - Si une erreur serveur se produit
  */
-router.get("/users", verifyToken,requireAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+router.get("/users", verifyToken, requireAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const result = await pool.query(
-      `SELECT id, email, name, rank, is_validated, created_at FROM users ORDER BY created_at DESC`
-    )
+    const result = await pool.query(`
+      SELECT 
+        u.id, 
+        u.email, 
+        u.name, 
+        u.rank, 
+        u.is_validated, 
+        u.created_at,
+        COUNT(p.id) AS nb_publi
+      FROM users u
+      LEFT JOIN publications p ON p.user_id = u.id
+      GROUP BY u.id
+      ORDER BY 
+        CASE u.rank 
+          WHEN 'admin' THEN 1 
+          WHEN 'mod' THEN 2 
+          ELSE 3 
+        END,
+        u.name ASC
+    `)
+
     res.json(result.rows)
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: "Erreur récupération utilisateurs" })
   }
 })
+
 
 /**
  * Route pour mettre à jour le rang d'un utilisateur
