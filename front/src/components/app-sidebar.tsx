@@ -25,7 +25,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { NavUser } from "@/components/nav-users"
-import { useUser, isAdmin } from "@/hooks/userContext"
+import { useUser, isAdmin, isValidated } from "@/hooks/userContext"
 
 const items = [
   {
@@ -125,6 +125,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {isValidated(user) && (
         <SidebarGroup>
           <SidebarGroupLabel>Actions</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -142,6 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        )}
 
         {isAdmin(user) && (
           <SidebarGroup>
