@@ -7,11 +7,11 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
-import { Music2 } from "lucide-react"
 import CustomBreadcrumb from "@/components/Breadcrumb"
-import { CardPublication, type Genre } from "@/components/CardPublication"
-import { Badge } from "@/components/ui/badge"
-
+import { CardPublication } from "@/components/CardPublication"
+import { CardGenre } from "@/components/CardGenre"
+import { Skeleton } from "@/components/ui/skeleton"
+import type { Genre } from "@/Models/Genre"
 
 interface Publication {
   id: number
@@ -32,22 +32,34 @@ interface Publication {
 export default function Home() {
   const [publications, setPublications] = useState<Publication[]>([])
   const [topGenres, setTopGenres] = useState<Genre[]>([])
+  const [isLoadingPublications, setIsLoadingPublications] = useState(true)
+  const [isLoadingGenres, setIsLoadingGenres] = useState(true)
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPublications = async () => {
       try {
-        const [publi, genres] = await Promise.all([
-          api("/publications/last"),
-          api("/genres/top"),
-        ])
+        const publi = await api("/publications/last")
         setPublications(publi)
-        setTopGenres(genres)
       } catch (err) {
-        console.error("Erreur récupération données", err)
+        console.error("Erreur publications", err)
+      } finally {
+        setIsLoadingPublications(false)
       }
     }
 
-    fetchData()
+    const fetchGenres = async () => {
+      try {
+        const genres = await api("/genres/top")
+        setTopGenres(genres)
+      } catch (err) {
+        console.error("Erreur genres", err)
+      } finally {
+        setIsLoadingGenres(false)
+      }
+    }
+
+    fetchPublications()
+    fetchGenres()
   }, [])
 
   return (
@@ -66,23 +78,32 @@ export default function Home() {
             </div>
             <Carousel className="w-full">
               <CarouselContent className="-ml-4">
-                {publications.map((publication, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="pl-4 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
-                  >
-                    <CardPublication
-                      id={publication.id}
-                      title={publication.title}
-                      artist={publication.artist}
-                      url={publication.url}
-                      coverUrl={publication.coverUrl}
-                      user={publication.user}
-                      createdAt={publication.createdAt}
-                      genres={publication.genres || []}
-                    />
-                  </CarouselItem>
-                ))}
+                {isLoadingPublications
+                  ? Array.from({ length: 6 }).map((_, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="pl-4 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
+                      >
+                        <Skeleton className="h-48 rounded-xl" />
+                      </CarouselItem>
+                    ))
+                  : publications.map((publication, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="pl-4 sm:basis-1/2 md:basis-1/4 lg:basis-1/6"
+                      >
+                        <CardPublication
+                          id={publication.id}
+                          title={publication.title}
+                          artist={publication.artist}
+                          url={publication.url}
+                          coverUrl={publication.coverUrl}
+                          user={publication.user}
+                          createdAt={publication.createdAt}
+                          genres={publication.genres || []}
+                        />
+                      </CarouselItem>
+                    ))}
               </CarouselContent>
             </Carousel>
           </section>
@@ -96,23 +117,18 @@ export default function Home() {
               </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {topGenres.map((genre) => (
-                <div
-                  key={genre.id}
-                  className="relative group flex items-center justify-center rounded-xl border bg-muted p-4 text-center shadow-sm transition hover:shadow-md hover:bg-background cursor-pointer"
-                >
-                  <Music2 className="mr-2 h-4 w-4 text-primary opacity-60 group-hover:animate-pulse" />
-                  <span className="text-sm font-medium text-foreground">{genre.name}</span>
-
-                  {genre.publication_count && (
-                    <Badge className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5">
-                      {genre.publication_count}
-                    </Badge>
-                  )}
-                </div>
-              ))}
+              {isLoadingGenres
+                ? Array.from({ length: 6 }).map((_, index) => (
+                    <Skeleton key={index} className="h-24 rounded-xl" />
+                  ))
+                : topGenres.map((genre) => (
+                    <CardGenre
+                      key={genre.id}
+                      name={genre.name}
+                      nb_publi={genre.nb_publi}
+                    />
+                  ))}
             </div>
-
           </section>
 
           {/* CTA */}

@@ -7,11 +7,7 @@ import { fr } from "date-fns/locale"
 import { useState } from "react"
 import { Skeleton } from "./ui/skeleton"
 
-export interface Genre {
-  id: number
-  name: string
-  publication_count: number
-}
+
 
 interface User {
   name: string
@@ -52,20 +48,21 @@ const [isImgError, setIsImgError] = useState(false)
       rel="noopener noreferrer"
       className="block h-full"
     >
-      <Card className="overflow-hidden h-full hover:shadow-md transition py-0 select-none">
+      <Card className="group overflow-hidden h-full py-0 select-none transition hover:shadow-md hover:bg-muted/70 hover:opacity-95">
+
         <CardHeader className="p-0">
-        <div className="aspect-square w-full bg-muted relative">
+          <div className="aspect-square w-full bg-muted relative overflow-hidden">
             {isImgError || !coverUrl ? (
-            <Skeleton className="w-full h-full" />
+              <Skeleton className="w-full h-full" />
             ) : (
-            <img
+              <img
                 src={coverUrl}
                 alt={title || "Aucune image"}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                 onError={() => setIsImgError(true)}
-            />
+              />
             )}
-        </div>
+          </div>
         </CardHeader>
         <CardContent className="px-3 pt-3 pb-1 space-y-1.5">
             <div className="text-[10px] text-muted-foreground -mt-2">

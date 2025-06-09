@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react"
 import { SidebarInset } from "@/components/ui/sidebar"
-import { Music2 } from "lucide-react"
 import CustomBreadcrumb from "@/components/Breadcrumb"
 import { api } from "@/hooks/api"
+import { CardGenre } from "@/components/CardGenre"
+import type { Genre } from "@/Models/Genre"
 
-interface Genre {
-  id: number
-  name: string
-}
 
 export default function Genres() {
   const [genres, setGenres] = useState<Genre[]>([])
@@ -43,13 +40,11 @@ export default function Genres() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {genres.map((genre) => (
-              <div
+              <CardGenre
                 key={genre.id}
-                className="group flex items-center justify-center rounded-xl border bg-muted p-4 text-center shadow-sm transition hover:shadow-md hover:bg-background cursor-pointer"
-              >
-                <Music2 className="mr-2 h-4 w-4 text-primary opacity-60 group-hover:animate-pulse" />
-                <span className="text-sm font-medium text-foreground">{genre.name}</span>
-              </div>
+                name={genre.name}
+                nb_publi={genre.nb_publi}
+              />
             ))}
           </div>
         </div>

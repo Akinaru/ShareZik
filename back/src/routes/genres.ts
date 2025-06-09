@@ -3,10 +3,19 @@ import { pool } from '../db'
 
 const router = Router()
 
-// GET all categories
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM genres ORDER BY name ASC')
+    const result = await pool.query(`
+      SELECT 
+        g.id, 
+        g.name, 
+        COUNT(pg.publication_id) AS nb_publi
+      FROM genres g
+      LEFT JOIN publication_genres pg ON pg.genre_id = g.id
+      GROUP BY g.id
+      ORDER BY g.name ASC
+    `)
+
     res.json(result.rows)
   } catch (err) {
     console.error(err)
@@ -15,17 +24,18 @@ router.get('/', async (req, res) => {
 })
 
 
+
 router.get('/top', async (_req, res) => {
   try {
     const result = await pool.query(`
       SELECT 
         g.id, 
         g.name, 
-        COUNT(pg.publication_id) AS publication_count
+        COUNT(pg.publication_id) AS nb_publi
       FROM genres g
       JOIN publication_genres pg ON pg.genre_id = g.id
       GROUP BY g.id
-      ORDER BY publication_count DESC
+      ORDER BY nb_publi DESC
       LIMIT 5
     `)
 
@@ -58,5 +68,33 @@ router.post('/', async (req, res) => {
     }
   }
 })
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params
+
+  try {
+    // Supprimer les relations avec les publications
+    await pool.query(
+      'DELETE FROM publication_genres WHERE genre_id = $1',
+      [id]
+    )
+
+    // Supprimer le genre
+    const result = await pool.query(
+      'DELETE FROM genres WHERE id = $1 RETURNING *',
+      [id]
+    )
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Genre introuvable' })
+    }
+
+    res.json({ success: true, deleted: result.rows[0] })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Erreur lors de la suppression' })
+  }
+})
+
 
 export default router

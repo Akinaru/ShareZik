@@ -84,6 +84,53 @@ router.get('/', async (_req, res) => {
   }
 })
 
+router.get('/getbygenreid/:id', async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        t.*,
+        u.name AS user_name,
+        u.rank AS user_rank,
+        json_agg(json_build_object('id', c.id, 'name', c.name)) AS genres
+      FROM publications t
+      JOIN users u ON u.id = t.user_id
+      JOIN publication_genres pg ON pg.publication_id = t.id
+      JOIN genres c2 ON c2.id = pg.genre_id
+      LEFT JOIN publication_genres tc ON tc.publication_id = t.id
+      LEFT JOIN genres c ON c.id = tc.genre_id
+      WHERE pg.genre_id = $1
+      GROUP BY t.id, u.id
+      ORDER BY t.created_at DESC
+    `, [id])
+
+    const publications = result.rows.map(row => ({
+      id: row.id,
+      userId: row.user_id,
+      url: row.url,
+      platform: row.platform,
+      title: row.title,
+      artist: row.artist,
+      coverUrl: row.cover_url,
+      embedUrl: row.embed_url,
+      tags: row.tags,
+      createdAt: row.created_at,
+      user: {
+        name: row.user_name,
+        rank: row.user_rank,
+      },
+      genres: row.genres.filter((c: any) => c.id !== null)
+    }))
+
+    res.json(publications)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Erreur récupération publications par genre' })
+  }
+})
+
+
 router.get('/last', async (_req, res) => {
   try {
     const result = await pool.query(`
