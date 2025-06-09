@@ -10,9 +10,6 @@ import Login from "./pages/login"
 import Register from "./pages/register"
 import Home from "./pages/home"
 import { UserProvider, useUser } from "./hooks/userContext"
-import { Toaster } from "@/components/ui/sonner"
-import { toast } from "sonner"
-import { useEffect, useRef, type JSX } from "react"
 import Layout from "./components/Layout"
 import NewPublication from "./pages/publication/NewPublication"
 import NotFoundPage from "./pages/notfound"
@@ -21,21 +18,10 @@ import Genres from "./pages/genres"
 import Publications from "./pages/publication/publications"
 import GestionPublication from "./pages/publication/GestionPublication"
 
-
 // Route protégée : accès uniquement si connecté
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { user, isLoading } = useUser()
   const location = useLocation()
-  const hasShownToast = useRef(false)
-
-  useEffect(() => {
-    if (!isLoading && !user && !hasShownToast.current) {
-      toast("Connexion requise", {
-        description: "Merci de vous connecter pour accéder à cette page.",
-      })
-      hasShownToast.current = true
-    }
-  }, [user, isLoading])
 
   if (isLoading) return null
   if (!user) {
@@ -48,16 +34,6 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
 // Route publique : accès uniquement si NON connecté
 function PublicRoute({ children }: { children: JSX.Element }) {
   const { user, isLoading } = useUser()
-  const hasShownToast = useRef(false)
-
-  useEffect(() => {
-    if (!isLoading && user && !hasShownToast.current) {
-      toast("Déjà connecté", {
-        description: "Tu es déjà connecté à ton compte.",
-      })
-      hasShownToast.current = true
-    }
-  }, [user, isLoading])
 
   if (isLoading) return null
   if (user) {
@@ -167,7 +143,6 @@ function App() {
         <Router>
           <AppRoutes />
         </Router>
-        <Toaster />
       </UserProvider>
     </ThemeProvider>
   )

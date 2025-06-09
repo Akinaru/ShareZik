@@ -14,6 +14,13 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
+    // Vérifie si l’email existe déjà
+    const existing = await pool.query(`SELECT id FROM users WHERE email = $1`, [email])
+    if (existing.rows.length > 0) {
+      res.status(409).json({ error: 'Cette adresse email est déjà utilisée.' })
+      return
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
     const result = await pool.query(
       `INSERT INTO users (email, name, password, rank) VALUES ($1, $2, $3, 'guest') RETURNING id, email, name, rank, created_at`,
@@ -32,6 +39,7 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: 'Erreur lors de la création' })
   }
 })
+
 
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body
