@@ -82,7 +82,6 @@ const adminItems = [
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const location = useLocation()
   const { user } = useUser()
 
   return (
