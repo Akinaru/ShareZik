@@ -246,23 +246,23 @@ router.delete("/:id", verifyToken, requireAdmin, async (req: AuthRequest, res: R
 // PUT /publications/:id/genres
 router.put('/:id/genres', async (req, res) => {
   const publicationId = parseInt(req.params.id)
-  const { genreIds } = req.body // array de IDs
+  const { genreIds } = req.body
 
   if (!Array.isArray(genreIds)) {
     return res.status(400).json({ error: 'genreIds doit être un tableau' })
   }
 
   try {
-    // Supprimer les anciens liens
     await pool.query('DELETE FROM publication_genres WHERE publication_id = $1', [publicationId])
 
-    // Insérer les nouveaux
     const insertQueries = genreIds.map(
-      (genreId) => pool.query(
-        'INSERT INTO publication_genres (publication_id, genre_id) VALUES ($1, $2)',
-        [publicationId, genreId]
-      )
+      (genreId) =>
+        pool.query(
+          'INSERT INTO publication_genres (publication_id, genre_id) VALUES ($1, $2)',
+          [publicationId, genreId]
+        )
     )
+
     await Promise.all(insertQueries)
 
     res.status(200).json({ success: true })
@@ -271,6 +271,8 @@ router.put('/:id/genres', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la mise à jour des genres' })
   }
 })
+
+
 
 
 
